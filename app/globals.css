@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  /* Felt green palette */
+  --color-felt-dark:  #091f12;
+  --color-felt-base:  #132d1d;
+  --color-felt-mid:   #1a3d27;
+  --color-felt-card:  #1f4730;
+
+  /* Gold palette */
+  --color-gold-light: #f5d77a;
+  --color-gold-base:  #c9960d;
+  --color-gold-dark:  #7a5a08;
+
+  /* Chip states */
+  --color-chip-owned:   #16a34a;
+  --color-chip-missing: #1e3a28;
+
+  /* Fonts */
+  --font-anton:   var(--font-var-anton), 'Anton', sans-serif;
+  --font-archivo: var(--font-var-archivo), 'Archivo', sans-serif;
+}
+
+@layer base {
+  html {
+    background-color: #091f12;
+  }
+
+  body {
+    font-family: var(--font-archivo), sans-serif;
+    background-color: var(--color-felt-dark);
+    /* Subtle felt/noise texture */
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
