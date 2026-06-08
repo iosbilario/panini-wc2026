@@ -13,6 +13,7 @@ interface Props {
   showOnlyMissing: boolean
   onToggle: (teamCode: string, number: number) => void
   onCycleDup: (teamCode: string, number: number) => void
+  onResetDup: (teamCode: string, number: number) => void
 }
 
 export default function TeamCard({
@@ -23,6 +24,7 @@ export default function TeamCard({
   showOnlyMissing,
   onToggle,
   onCycleDup,
+  onResetDup,
 }: Props) {
   const allNumbers = teamNumbers(team)
   const ownedCount = allNumbers.filter((n) => owned.has(`${team.code}-${n}`)).length
@@ -69,6 +71,7 @@ export default function TeamCard({
               dupCount={dups.get(`${team.code}-${n}`) ?? 0}
               view="dups"
               onToggle={() => onCycleDup(team.code, n)}
+              onReset={() => onResetDup(team.code, n)}
             />
           ))}
         </div>
