@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Team } from '@/lib/catalog'
+import { stickerLabel } from '@/lib/catalog'
 
 interface TradeEntry {
   team: Team
@@ -21,7 +22,12 @@ export default function TradeListModal({ tradeList, totalDups, onClose }: Props)
     .map(
       ({ team, repeated }) =>
         `${team.flag} ${team.code}: ` +
-        repeated.map(({ n, qty }) => (qty > 1 ? `${n}×${qty}` : `${n}`)).join(', ')
+        repeated
+          .map(({ n, qty }) => {
+            const label = stickerLabel(team, n)
+            return qty > 1 ? `${label}×${qty}` : label
+          })
+          .join(', ')
     )
     .join('\n')
 

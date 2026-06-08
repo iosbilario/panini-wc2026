@@ -1,8 +1,9 @@
 'use client'
 
 import type { Team } from '@/lib/catalog'
-import { isSpecialGroup } from '@/lib/catalog'
+import { isSpecialGroup, stickerLabel, teamNumbers } from '@/lib/catalog'
 import StickerChip from './StickerChip'
+import Flag from './Flag'
 
 interface Props {
   team: Team
@@ -23,7 +24,7 @@ export default function TeamCard({
   onToggle,
   onCycleDup,
 }: Props) {
-  const allNumbers = Array.from({ length: team.total }, (_, i) => i + 1)
+  const allNumbers = teamNumbers(team)
   const ownedCount = allNumbers.filter((n) => owned.has(`${team.code}-${n}`)).length
   const isComplete = ownedCount === team.total
   const isSpecial = isSpecialGroup(team.grp)
@@ -61,6 +62,7 @@ export default function TeamCard({
             <StickerChip
               key={n}
               number={n}
+              label={stickerLabel(team, n)}
               isOwned
               isEscudo={!isSpecial && n === 1}
               isPais={!isSpecial && n === 13}
@@ -104,6 +106,7 @@ export default function TeamCard({
           <StickerChip
             key={n}
             number={n}
+            label={stickerLabel(team, n)}
             isOwned={owned.has(`${team.code}-${n}`)}
             isEscudo={!isSpecial && n === 1}
             isPais={!isSpecial && n === 13}
@@ -137,7 +140,7 @@ function CardHeader({
             color: 'var(--color-gold-base)',
           }}
         >
-          <span aria-hidden className="text-sm leading-none">{team.flag}</span>
+          <Flag iso2={team.iso2} fallback={team.flag} className="text-sm" />
           {team.code}
         </span>
         <span
