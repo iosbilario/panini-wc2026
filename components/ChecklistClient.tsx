@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { GROUPS, TOTAL_STICKERS, teamsByGroup, groupLabel } from '@/lib/catalog'
+import { GROUPS, TOTAL_STICKERS, teamsByGroup, teamNumbers, groupLabel } from '@/lib/catalog'
 import type { Team } from '@/lib/catalog'
 import TeamCard from './TeamCard'
 import ProgressBar from './ProgressBar'
@@ -185,7 +185,7 @@ export default function ChecklistClient({
       teams
         .map((team) => ({
           team,
-          missing: Array.from({ length: team.total }, (_, i) => i + 1).filter(
+          missing: teamNumbers(team).filter(
             (n) => !owned.has(`${team.code}-${n}`)
           ),
         }))
@@ -199,7 +199,7 @@ export default function ChecklistClient({
       teams
         .map((team) => ({
           team,
-          repeated: Array.from({ length: team.total }, (_, i) => i + 1)
+          repeated: teamNumbers(team)
             .map((n) => ({ n, qty: dups.get(`${team.code}-${n}`) ?? 0 }))
             .filter(({ qty }) => qty > 0),
         }))
@@ -356,17 +356,13 @@ export default function ChecklistClient({
           if (view === 'dups') {
             // Hide groups where nothing is collected (nothing to trade)
             const anyOwned = grpTeams.some((team) =>
-              Array.from({ length: team.total }, (_, i) => i + 1).some((n) =>
-                owned.has(`${team.code}-${n}`)
-              )
+              teamNumbers(team).some((n) => owned.has(`${team.code}-${n}`))
             )
             if (!anyOwned) return null
           } else if (
             showOnlyMissing &&
             grpTeams.every((team) =>
-              Array.from({ length: team.total }, (_, i) => i + 1).every((n) =>
-                owned.has(`${team.code}-${n}`)
-              )
+              teamNumbers(team).every((n) => owned.has(`${team.code}-${n}`))
             )
           ) {
             // In missing-only mode, skip groups that are all complete

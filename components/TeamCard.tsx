@@ -1,7 +1,7 @@
 'use client'
 
 import type { Team } from '@/lib/catalog'
-import { isSpecialGroup, stickerLabel } from '@/lib/catalog'
+import { isSpecialGroup, stickerLabel, teamNumbers } from '@/lib/catalog'
 import StickerChip from './StickerChip'
 import Flag from './Flag'
 
@@ -24,7 +24,7 @@ export default function TeamCard({
   onToggle,
   onCycleDup,
 }: Props) {
-  const allNumbers = Array.from({ length: team.total }, (_, i) => i + 1)
+  const allNumbers = teamNumbers(team)
   const ownedCount = allNumbers.filter((n) => owned.has(`${team.code}-${n}`)).length
   const isComplete = ownedCount === team.total
   const isSpecial = isSpecialGroup(team.grp)

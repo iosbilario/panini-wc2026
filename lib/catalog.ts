@@ -1,19 +1,22 @@
 export interface Team {
   code: string
   name: string
-  grp: string   // 'Especiais' | 'A'–'L' | 'Coca-Cola'
-  total: number
+  grp: string   // 'Especiais' | 'FIFA Museum' | 'A'–'L' | 'Coca-Cola'
+  total: number  // number of stickers in this section
+  from?: number  // first sticker number (default 1) — lets two sections share one code
   ord: number
   flag: string   // emoji shown in text exports (renders on mobile/WhatsApp)
   iso2?: string  // ISO 3166-1 alpha-2 (or 'gb-eng'/'gb-sct') for the on-screen image flag
 }
 
 export const TEAMS: Team[] = [
-  // ── Especiais (foil) ───────────────────────────────────────────────────
-  // FWC00–FWC08 = abertura (logo, emblemas, mascotes, bola, países-sede)
-  // FWC09–FWC19 = "FIFA Museum" (campeões de Copas passadas, 1934–2022)
-  // Numeração interna 1–20; exibida como 00–19 (ver stickerLabel).
-  { code: 'FWC', name: 'Especiais (FWC00–19)',  grp: 'Especiais', total: 20, ord: 0,  flag: '🏆' },
+  // ── Especiais (foil, código FWC00–FWC19) ──────────────────────────────
+  // Mesmo team_code 'FWC' (1–20 no banco), dividido em duas seções visuais
+  // por faixa. Exibido como 00–19 (ver stickerLabel).
+  //   Abertura      → nº 1–9  → FWC00–FWC08 (logo, emblemas, mascotes, bola…)
+  //   FIFA Museum   → nº 10–20 → FWC09–FWC19 (campeões de Copas, 1934–2022)
+  { code: 'FWC', name: 'Abertura',                grp: 'Especiais',   total: 9,  from: 1,  ord: 0,  flag: '🏆' },
+  { code: 'FWC', name: 'FIFA Museum (campeões)',  grp: 'FIFA Museum', total: 11, from: 10, ord: 0,  flag: '🏛️' },
 
   // ── Grupo A ────────────────────────────────────────────────────────────
   { code: 'MEX', name: 'México',               grp: 'A', total: 20, ord: 1,  flag: '🇲🇽', iso2: 'mx' },
@@ -99,13 +102,14 @@ export const TOTAL_STICKERS = TEAMS.reduce((s, t) => s + t.total, 0)
 
 export const GROUPS = [
   'Especiais',
+  'FIFA Museum',
   'A', 'B', 'C', 'D', 'E', 'F',
   'G', 'H', 'I', 'J', 'K', 'L',
   'Coca-Cola',
 ]
 
 // Groups that are NOT national teams (no escudo/país markers, render as special)
-export const SPECIAL_GROUPS = new Set(['Especiais', 'Coca-Cola'])
+export const SPECIAL_GROUPS = new Set(['Especiais', 'FIFA Museum', 'Coca-Cola'])
 
 export function isSpecialGroup(grp: string): boolean {
   return SPECIAL_GROUPS.has(grp)
@@ -113,6 +117,12 @@ export function isSpecialGroup(grp: string): boolean {
 
 export function teamsByGroup(grp: string): Team[] {
   return TEAMS.filter(t => t.grp === grp).sort((a, b) => a.ord - b.ord)
+}
+
+// Sticker numbers covered by a section (handles `from` ranges).
+export function teamNumbers(team: Team): number[] {
+  const start = team.from ?? 1
+  return Array.from({ length: team.total }, (_, i) => start + i)
 }
 
 // Display label for a sticker. FWC stickers are numbered 00–19 in the album,
@@ -125,6 +135,7 @@ export function stickerLabel(team: Team, n: number): string {
 // Human-readable section heading for a group code
 export function groupLabel(grp: string): string {
   if (grp === 'Especiais') return '★ Especiais'
+  if (grp === 'FIFA Museum') return '🏛️ FIFA Museum'
   if (grp === 'Coca-Cola') return '🥤 Coca-Cola'
   return `Grupo ${grp}`
 }
