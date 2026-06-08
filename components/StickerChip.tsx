@@ -1,5 +1,7 @@
 'use client'
 
+import { useRef } from 'react'
+
 interface Props {
   number: number
   label?: string
@@ -9,6 +11,7 @@ interface Props {
   dupCount: number
   view: 'collect' | 'dups'
   onToggle: () => void
+  onReset?: () => void
 }
 
 export default function StickerChip({
@@ -20,18 +23,51 @@ export default function StickerChip({
   dupCount,
   view,
   onToggle,
+  onReset,
 }: Props) {
   const hasDup = dupCount > 0
   const text = label ?? String(number)
+
+  // Long-press (or right-click) clears the repeat count back to zero.
+  const longPressed = useRef(false)
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const startPress = () => {
+    longPressed.current = false
+    timer.current = setTimeout(() => {
+      longPressed.current = true
+      onReset?.()
+    }, 450)
+  }
+  const endPress = () => {
+    if (timer.current) {
+      clearTimeout(timer.current)
+      timer.current = null
+    }
+  }
+  const handleTap = () => {
+    if (longPressed.current) {
+      longPressed.current = false
+      return // long-press already handled the reset
+    }
+    onToggle()
+  }
 
   // ── Duplicates view: chip is always owned; highlight when it has repeats ─
   if (view === 'dups') {
     return (
       <button
-        onClick={onToggle}
+        onClick={handleTap}
+        onPointerDown={startPress}
+        onPointerUp={endPress}
+        onPointerLeave={endPress}
+        onContextMenu={(e) => {
+          e.preventDefault()
+          onReset?.()
+        }}
         title={
           hasDup
-            ? `#${text} — ${dupCount} repetida${dupCount !== 1 ? 's' : ''} (toque p/ +1)`
+            ? `#${text} — ${dupCount} repetida${dupCount !== 1 ? 's' : ''} · toque p/ +1 · segure p/ zerar`
             : `#${text} — toque para marcar repetida`
         }
         className="relative flex items-center justify-center rounded-lg w-10 h-10 transition-all active:scale-90 select-none touch-manipulation"

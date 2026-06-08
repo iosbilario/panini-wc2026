@@ -144,6 +144,34 @@ export default function ChecklistClient({
     [dups, supabase, userId]
   )
 
+  // ── Reset repeats for a sticker (long-press / right-click) ─────────────
+  const resetDup = useCallback(
+    async (teamCode: string, number: number) => {
+      const key = `${teamCode}-${number}`
+      const prevQty = dups.get(key) ?? 0
+      if (prevQty === 0) return
+
+      setDups((prev) => {
+        const next = new Map(prev)
+        next.delete(key)
+        return next
+      })
+
+      try {
+        const { error } = await supabase
+          .from('duplicates')
+          .delete()
+          .eq('user_id', userId)
+          .eq('team_code', teamCode)
+          .eq('number', number)
+        if (error) throw error
+      } catch {
+        setDups((prev) => new Map(prev).set(key, prevQty))
+      }
+    },
+    [dups, supabase, userId]
+  )
+
   // ── Sign out ───────────────────────────────────────────────────────────
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -345,8 +373,8 @@ export default function ChecklistClient({
           >
             <strong style={{ color: '#facc15' }}>Modo repetidas.</strong> Toque numa
             figurinha colada para marcar quantas você tem para troca (×1, ×2…). Toque de
-            novo para aumentar; volta a zero depois de {MAX_DUP}. Depois use{' '}
-            <strong>📤 Lista de troca</strong> para enviar aos interessados.
+            novo para aumentar; <strong>segure (ou clique direito) para zerar</strong>.
+            Depois use <strong>📤 Lista de troca</strong> para enviar aos interessados.
           </div>
         )}
 
@@ -388,6 +416,7 @@ export default function ChecklistClient({
                     showOnlyMissing={showOnlyMissing}
                     onToggle={toggleSticker}
                     onCycleDup={cycleDup}
+                    onResetDup={resetDup}
                   />
                 ))}
               </div>
