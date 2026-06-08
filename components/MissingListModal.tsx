@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import type { Team } from '@/lib/catalog'
+import { stickerLabel } from '@/lib/catalog'
 
 interface MissingEntry {
   team: Team
@@ -18,7 +19,10 @@ export default function MissingListModal({ missingList, totalMissing, onClose }:
   const [copied, setCopied] = useState(false)
 
   const text = missingList
-    .map(({ team, missing }) => `${team.flag} ${team.code}: ${missing.join(', ')}`)
+    .map(
+      ({ team, missing }) =>
+        `${team.flag} ${team.code}: ${missing.map((n) => stickerLabel(team, n)).join(', ')}`
+    )
     .join('\n')
 
   const handleCopy = async () => {

@@ -1,7 +1,7 @@
 'use client'
 
 import type { Team } from '@/lib/catalog'
-import { isSpecialGroup } from '@/lib/catalog'
+import { isSpecialGroup, stickerLabel } from '@/lib/catalog'
 import StickerChip from './StickerChip'
 import Flag from './Flag'
 
@@ -62,6 +62,7 @@ export default function TeamCard({
             <StickerChip
               key={n}
               number={n}
+              label={stickerLabel(team, n)}
               isOwned
               isEscudo={!isSpecial && n === 1}
               isPais={!isSpecial && n === 13}
@@ -105,6 +106,7 @@ export default function TeamCard({
           <StickerChip
             key={n}
             number={n}
+            label={stickerLabel(team, n)}
             isOwned={owned.has(`${team.code}-${n}`)}
             isEscudo={!isSpecial && n === 1}
             isPais={!isSpecial && n === 13}

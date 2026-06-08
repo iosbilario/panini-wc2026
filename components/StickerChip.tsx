@@ -2,6 +2,7 @@
 
 interface Props {
   number: number
+  label?: string
   isOwned: boolean
   isEscudo: boolean
   isPais: boolean
@@ -12,6 +13,7 @@ interface Props {
 
 export default function StickerChip({
   number,
+  label,
   isOwned,
   isEscudo,
   isPais,
@@ -20,6 +22,7 @@ export default function StickerChip({
   onToggle,
 }: Props) {
   const hasDup = dupCount > 0
+  const text = label ?? String(number)
 
   // ── Duplicates view: chip is always owned; highlight when it has repeats ─
   if (view === 'dups') {
@@ -28,8 +31,8 @@ export default function StickerChip({
         onClick={onToggle}
         title={
           hasDup
-            ? `#${number} — ${dupCount} repetida${dupCount !== 1 ? 's' : ''} (toque p/ +1)`
-            : `#${number} — toque para marcar repetida`
+            ? `#${text} — ${dupCount} repetida${dupCount !== 1 ? 's' : ''} (toque p/ +1)`
+            : `#${text} — toque para marcar repetida`
         }
         className="relative flex items-center justify-center rounded-lg w-10 h-10 transition-all active:scale-90 select-none touch-manipulation"
         style={{
@@ -55,7 +58,7 @@ export default function StickerChip({
             fontFamily: 'var(--font-archivo)',
           }}
         >
-          {number}
+          {text}
         </span>
       </button>
     )
@@ -66,7 +69,7 @@ export default function StickerChip({
     <button
       onClick={onToggle}
       title={
-        isEscudo ? `#${number} — Escudo` : isPais ? `#${number} — País` : `#${number}`
+        isEscudo ? `#${text} — Escudo` : isPais ? `#${text} — País` : `#${text}`
       }
       className="relative flex flex-col items-center justify-center rounded-lg w-10 h-10 transition-all active:scale-90 select-none touch-manipulation"
       style={{
@@ -108,7 +111,7 @@ export default function StickerChip({
           fontFamily: 'var(--font-archivo)',
         }}
       >
-        {number}
+        {text}
       </span>
 
       {/* Special label: escudo(1) or país(13) */}

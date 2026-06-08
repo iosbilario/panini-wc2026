@@ -9,8 +9,11 @@ export interface Team {
 }
 
 export const TEAMS: Team[] = [
-  // ── Especiais ──────────────────────────────────────────────────────────
-  { code: 'FWC', name: 'Especiais (FWC 1–8)',  grp: 'Especiais', total: 8,  ord: 0,  flag: '🏆' },
+  // ── Especiais (foil) ───────────────────────────────────────────────────
+  // FWC00–FWC08 = abertura (logo, emblemas, mascotes, bola, países-sede)
+  // FWC09–FWC19 = "FIFA Museum" (campeões de Copas passadas, 1934–2022)
+  // Numeração interna 1–20; exibida como 00–19 (ver stickerLabel).
+  { code: 'FWC', name: 'Especiais (FWC00–19)',  grp: 'Especiais', total: 20, ord: 0,  flag: '🏆' },
 
   // ── Grupo A ────────────────────────────────────────────────────────────
   { code: 'MEX', name: 'México',               grp: 'A', total: 20, ord: 1,  flag: '🇲🇽', iso2: 'mx' },
@@ -90,7 +93,8 @@ export const TEAMS: Team[] = [
   { code: 'COK', name: 'Coca-Cola',            grp: 'Coca-Cola', total: 14, ord: 49, flag: '🥤' },
 ]
 
-// 8 (FWC) + 48×20 (seleções) + 14 (Coca-Cola) = 982
+// 20 (FWC00–19) + 48×20 (seleções) + 14 (Coca-Cola) = 994
+// (álbum base oficial = 980; +14 da promo Coca-Cola que o app também rastreia)
 export const TOTAL_STICKERS = TEAMS.reduce((s, t) => s + t.total, 0)
 
 export const GROUPS = [
@@ -109,6 +113,13 @@ export function isSpecialGroup(grp: string): boolean {
 
 export function teamsByGroup(grp: string): Team[] {
   return TEAMS.filter(t => t.grp === grp).sort((a, b) => a.ord - b.ord)
+}
+
+// Display label for a sticker. FWC stickers are numbered 00–19 in the album,
+// but stored internally as 1–20, so shift + zero-pad for display/export.
+export function stickerLabel(team: Team, n: number): string {
+  if (team.code === 'FWC') return String(n - 1).padStart(2, '0')
+  return String(n)
 }
 
 // Human-readable section heading for a group code

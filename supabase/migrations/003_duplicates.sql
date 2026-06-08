@@ -4,11 +4,14 @@
 -- Safe to re-run (idempotent).
 -- ============================================================
 
--- ── New special section referenced by the catalog ─────────────────────
--- owned/duplicates have a FK to teams(code), so this MUST exist before
--- anyone can mark a Coca-Cola sticker.
+-- ── Catalog fixes referenced by the app ────────────────────────────────
+-- owned/duplicates have a FK to teams(code), so these rows MUST exist /
+-- be correct before anyone marks the respective stickers.
+--   FWC: the special foil section is FWC00–FWC19 (20), not 8.
+--   COK: Coca-Cola "debaixo do rótulo" (14, versão Brasil).
 insert into teams (code, name, grp, total, ord) values
-  ('COK', 'Coca-Cola', 'Coca-Cola', 14, 49)
+  ('FWC', 'Especiais (FWC00–19)', 'Especiais', 20, 0),
+  ('COK', 'Coca-Cola',            'Coca-Cola', 14, 49)
 on conflict (code) do update
   set name  = excluded.name,
       grp   = excluded.grp,
