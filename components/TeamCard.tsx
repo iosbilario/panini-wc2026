@@ -3,6 +3,7 @@
 import type { Team } from '@/lib/catalog'
 import { isSpecialGroup } from '@/lib/catalog'
 import StickerChip from './StickerChip'
+import Flag from './Flag'
 
 interface Props {
   team: Team
@@ -137,7 +138,7 @@ function CardHeader({
             color: 'var(--color-gold-base)',
           }}
         >
-          <span aria-hidden className="text-sm leading-none">{team.flag}</span>
+          <Flag iso2={team.iso2} fallback={team.flag} className="text-sm" />
           {team.code}
         </span>
         <span

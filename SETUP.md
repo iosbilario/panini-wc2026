@@ -33,8 +33,8 @@ Cole o conteúdo de `supabase/migrations/002_seed_teams.sql` e clique **Run**.
 Cole o conteúdo de `supabase/migrations/003_duplicates.sql` e clique **Run**.
 
 > Esta migration cria a tabela `duplicates` (figurinhas repetidas para troca),
-> cadastra as seções **Estádios** (16) e **Coca-Cola** (14) e adiciona um CHECK
-> de faixa nos números. É segura de re-executar.
+> cadastra a seção **Coca-Cola** (14) e adiciona um CHECK de faixa nos números.
+> É segura de re-executar.
 
 ---
 
@@ -152,7 +152,7 @@ panini-wc2026/
 │   ├── TradeListModal.tsx  # Modal "Lista de troca" (repetidas, export)
 │   └── AuthForm.tsx        # Formulário de login
 ├── lib/
-│   ├── catalog.ts          # 49 seleções + Estádios + Coca-Cola (estático, c/ bandeiras)
+│   ├── catalog.ts          # 48 seleções + Especiais + Coca-Cola (estático, c/ bandeiras)
 │   └── supabase/           # Clientes browser + server
 ├── middleware.ts            # Proteção de rotas
 └── supabase/migrations/    # SQL para rodar no dashboard (001, 002, 003)
