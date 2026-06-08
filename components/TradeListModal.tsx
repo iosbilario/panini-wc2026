@@ -1,25 +1,34 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import type { Team } from '@/lib/catalog'
 
-interface MissingEntry {
+interface TradeEntry {
   team: Team
-  missing: number[]
+  repeated: { n: number; qty: number }[]
 }
 
 interface Props {
-  missingList: MissingEntry[]
-  totalMissing: number
+  tradeList: TradeEntry[]
+  totalDups: number
   onClose: () => void
 }
 
-export default function MissingListModal({ missingList, totalMissing, onClose }: Props) {
+export default function TradeListModal({ tradeList, totalDups, onClose }: Props) {
   const [copied, setCopied] = useState(false)
 
-  const text = missingList
-    .map(({ team, missing }) => `${team.flag} ${team.code}: ${missing.join(', ')}`)
+  const body = tradeList
+    .map(
+      ({ team, repeated }) =>
+        `${team.flag} ${team.code}: ` +
+        repeated.map(({ n, qty }) => (qty > 1 ? `${n}×${qty}` : `${n}`)).join(', ')
+    )
     .join('\n')
+
+  const text =
+    `♻️ Repetidas para troca — Copa 2026\n` +
+    `${totalDups} figurinha${totalDups !== 1 ? 's' : ''} disponíve${totalDups !== 1 ? 'is' : 'l'}\n\n` +
+    body
 
   const handleCopy = async () => {
     try {
@@ -59,14 +68,12 @@ export default function MissingListModal({ missingList, totalMissing, onClose }:
           style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
         >
           <div>
-            <h3
-              className="text-lg"
-              style={{ fontFamily: 'var(--font-anton)', color: 'var(--color-gold-base)' }}
-            >
-              Lista de Faltas
+            <h3 className="text-lg" style={{ fontFamily: 'var(--font-anton)', color: '#facc15' }}>
+              ♻️ Repetidas para troca
             </h3>
             <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
-              {totalMissing} figurinha{totalMissing !== 1 ? 's' : ''} faltando
+              {totalDups} figurinha{totalDups !== 1 ? 's' : ''} disponíve
+              {totalDups !== 1 ? 'is' : 'l'} para troca
             </p>
           </div>
           <button
@@ -80,11 +87,14 @@ export default function MissingListModal({ missingList, totalMissing, onClose }:
 
         {/* List */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          {missingList.length === 0 ? (
+          {tradeList.length === 0 ? (
             <div className="text-center py-8">
-              <div className="text-4xl mb-3">🎉</div>
+              <div className="text-4xl mb-3">📭</div>
               <p style={{ color: 'rgba(255,255,255,0.6)' }}>
-                Álbum completo!
+                Nenhuma repetida marcada ainda.
+              </p>
+              <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                Ative o modo <strong>♻️ Repetidas</strong> e toque nas figurinhas coladas.
               </p>
             </div>
           ) : (
@@ -98,22 +108,19 @@ export default function MissingListModal({ missingList, totalMissing, onClose }:
         </div>
 
         {/* Footer */}
-        {missingList.length > 0 && (
-          <div
-            className="px-5 py-4"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
-          >
+        {tradeList.length > 0 && (
+          <div className="px-5 py-4" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
             <button
               onClick={handleCopy}
               className="w-full py-3 rounded-xl font-bold text-sm transition-all active:scale-[0.98]"
               style={{
-                backgroundColor: copied ? '#15803d' : 'var(--color-gold-base)',
-                color: copied ? 'white' : 'var(--color-felt-dark)',
+                backgroundColor: copied ? '#15803d' : '#facc15',
+                color: copied ? 'white' : '#1a1205',
                 fontFamily: 'var(--font-anton)',
                 letterSpacing: '0.04em',
               }}
             >
-              {copied ? '✓ Copiado!' : '📋 Copiar lista'}
+              {copied ? '✓ Copiado!' : '📋 Copiar lista de troca'}
             </button>
           </div>
         )}

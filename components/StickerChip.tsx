@@ -5,6 +5,8 @@ interface Props {
   isOwned: boolean
   isEscudo: boolean
   isPais: boolean
+  dupCount: number
+  view: 'collect' | 'dups'
   onToggle: () => void
 }
 
@@ -13,8 +15,53 @@ export default function StickerChip({
   isOwned,
   isEscudo,
   isPais,
+  dupCount,
+  view,
   onToggle,
 }: Props) {
+  const hasDup = dupCount > 0
+
+  // ── Duplicates view: chip is always owned; highlight when it has repeats ─
+  if (view === 'dups') {
+    return (
+      <button
+        onClick={onToggle}
+        title={
+          hasDup
+            ? `#${number} — ${dupCount} repetida${dupCount !== 1 ? 's' : ''} (toque p/ +1)`
+            : `#${number} — toque para marcar repetida`
+        }
+        className="relative flex items-center justify-center rounded-lg w-10 h-10 transition-all active:scale-90 select-none touch-manipulation"
+        style={{
+          backgroundColor: hasDup ? '#a16207' : 'var(--color-chip-missing)',
+          border: hasDup
+            ? '1.5px solid rgba(250,204,21,0.55)'
+            : '1.5px solid rgba(255,255,255,0.08)',
+          boxShadow: hasDup ? '0 2px 8px rgba(161,98,7,0.45)' : 'none',
+        }}
+      >
+        {hasDup && (
+          <span
+            className="absolute -top-1 -right-1 min-w-[15px] h-[15px] px-0.5 flex items-center justify-center rounded-full text-[9px] font-bold leading-none"
+            style={{ backgroundColor: '#facc15', color: '#1a1205' }}
+          >
+            ×{dupCount}
+          </span>
+        )}
+        <span
+          className="text-xs font-bold leading-none"
+          style={{
+            color: hasDup ? 'white' : 'rgba(255,255,255,0.35)',
+            fontFamily: 'var(--font-archivo)',
+          }}
+        >
+          {number}
+        </span>
+      </button>
+    )
+  }
+
+  // ── Collect view (default) ─────────────────────────────────────────────
   return (
     <button
       onClick={onToggle}
@@ -39,6 +86,17 @@ export default function StickerChip({
           style={{ color: 'rgba(255,255,255,0.7)' }}
         >
           ✓
+        </span>
+      )}
+
+      {/* Repeated indicator (top-left dot) when this sticker has duplicates */}
+      {hasDup && (
+        <span
+          className="absolute top-0.5 left-0.5 text-[8px] leading-none font-bold"
+          style={{ color: '#facc15' }}
+          title={`${dupCount} repetida${dupCount !== 1 ? 's' : ''}`}
+        >
+          ♻
         </span>
       )}
 

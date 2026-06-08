@@ -11,15 +11,20 @@ export default async function ChecklistPage() {
 
   if (!user) redirect('/')
 
-  // Load all owned stickers for this user in one query
-  const { data: owned } = await supabase
-    .from('owned')
-    .select('team_code, number')
-    .eq('user_id', user.id)
+  // Load all owned + duplicate stickers for this user in parallel
+  const [{ data: owned }, { data: duplicates }] = await Promise.all([
+    supabase.from('owned').select('team_code, number').eq('user_id', user.id),
+    supabase.from('duplicates').select('team_code, number, qty').eq('user_id', user.id),
+  ])
 
   const initialOwned = (owned ?? []).map(
     (r) => `${r.team_code}-${r.number}`
   )
+
+  const initialDups = (duplicates ?? []).map((r) => ({
+    key: `${r.team_code}-${r.number}`,
+    qty: r.qty as number,
+  }))
 
   return (
     <ChecklistClient
@@ -27,6 +32,7 @@ export default async function ChecklistPage() {
       userEmail={user.email ?? ''}
       teams={TEAMS}
       initialOwned={initialOwned}
+      initialDups={initialDups}
     />
   )
 }

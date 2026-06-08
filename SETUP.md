@@ -28,6 +28,14 @@ Cole o conteúdo de `supabase/migrations/001_schema.sql` e clique **Run**.
 
 Cole o conteúdo de `supabase/migrations/002_seed_teams.sql` e clique **Run**.
 
+### 2c. Repetidas + seções especiais + hardening
+
+Cole o conteúdo de `supabase/migrations/003_duplicates.sql` e clique **Run**.
+
+> Esta migration cria a tabela `duplicates` (figurinhas repetidas para troca),
+> cadastra as seções **Estádios** (16) e **Coca-Cola** (14) e adiciona um CHECK
+> de faixa nos números. É segura de re-executar.
+
 ---
 
 ## Passo 3 — Configurar Auth (magic link)
@@ -136,15 +144,16 @@ panini-wc2026/
 │   ├── checklist/          # Checklist principal (protegido)
 │   └── api/seed/           # Importar progresso inicial (dono)
 ├── components/
-│   ├── ChecklistClient.tsx # Lógica client-side + otimismo
-│   ├── TeamCard.tsx        # Card por seleção
-│   ├── StickerChip.tsx     # Chip individual (toggle)
+│   ├── ChecklistClient.tsx # Lógica client-side + otimismo (coleta + repetidas)
+│   ├── TeamCard.tsx        # Card por seleção/seção (bandeira + sigla)
+│   ├── StickerChip.tsx     # Chip individual (toggle / quantidade de repetidas)
 │   ├── ProgressBar.tsx     # Barra de progresso global
-│   ├── MissingListModal.tsx# Modal "Lista de faltas"
+│   ├── MissingListModal.tsx# Modal "Lista de faltas" (export)
+│   ├── TradeListModal.tsx  # Modal "Lista de troca" (repetidas, export)
 │   └── AuthForm.tsx        # Formulário de login
 ├── lib/
-│   ├── catalog.ts          # 49 seleções (estático)
+│   ├── catalog.ts          # 49 seleções + Estádios + Coca-Cola (estático, c/ bandeiras)
 │   └── supabase/           # Clientes browser + server
 ├── middleware.ts            # Proteção de rotas
-└── supabase/migrations/    # SQL para rodar no dashboard
+└── supabase/migrations/    # SQL para rodar no dashboard (001, 002, 003)
 ```
