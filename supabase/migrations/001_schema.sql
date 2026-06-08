@@ -25,14 +25,17 @@ create table if not exists owned (
 
 alter table owned enable row level security;
 
+drop policy if exists "own rows - select" on owned;
 create policy "own rows - select"
   on owned for select
   using (auth.uid() = user_id);
 
+drop policy if exists "own rows - insert" on owned;
 create policy "own rows - insert"
   on owned for insert
   with check (auth.uid() = user_id);
 
+drop policy if exists "own rows - delete" on owned;
 create policy "own rows - delete"
   on owned for delete
   using (auth.uid() = user_id);
@@ -40,6 +43,7 @@ create policy "own rows - delete"
 -- teams is public read-only
 alter table teams enable row level security;
 
+drop policy if exists "teams read" on teams;
 create policy "teams read"
   on teams for select
   using (true);
